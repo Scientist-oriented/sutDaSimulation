@@ -1,5 +1,87 @@
 // https://m.blog.naver.com/jijok73/221467812386  -> 섯다룰 여기 참고
 
+// 이미지 부분
+const cardImages = document.getElementsByTagName("img");
+const cardImage1a = document.querySelector("#card1a");
+const cardImage1b = document.querySelector("#card1b");
+const cardImage2a = document.querySelector("#card2a");
+const cardImage2b = document.querySelector("#card2b");
+const cardImage3a = document.querySelector("#card3a");
+const cardImage3b = document.querySelector("#card3b");
+const cardImage4a = document.querySelector("#card4a");
+const cardImage4b = document.querySelector("#card4b");
+const cardImage5a = document.querySelector("#card5a");
+const cardImage5b = document.querySelector("#card5b");
+const cardImage6a = document.querySelector("#card6a");
+const cardImage6b = document.querySelector("#card6b");
+const cardImage7a = document.querySelector("#card7a");
+const cardImage7b = document.querySelector("#card7b");
+const cardImage8a = document.querySelector("#card8a");
+const cardImage8b = document.querySelector("#card8b");
+const cardImage9a = document.querySelector("#card9a");
+const cardImage9b = document.querySelector("#card9b");
+const cardImage10a = document.querySelector("#card10a");
+const cardImage10b = document.querySelector("#card10b");
+
+
+// 각 카드 객체에 저장
+class Card {
+    constructor(num, side, image) {
+        this.num = num;
+        this.side = side;
+        this.image = image;
+    }
+}
+
+const card1a = new Card(1, "a", cardImage1a)
+const card1b = new Card(1, "b", cardImage1b)
+const card2a = new Card(2, "a", cardImage2a)
+const card2b = new Card(2, "b", cardImage2b)
+const card3a = new Card(3, "a", cardImage3a)
+const card3b = new Card(3, "b", cardImage3b)
+const card4a = new Card(4, "a", cardImage4a)
+const card4b = new Card(4, "b", cardImage4b)
+const card5a = new Card(5, "a", cardImage5a)
+const card5b = new Card(5, "b", cardImage5b)
+const card6a = new Card(6, "a", cardImage6a)
+const card6b = new Card(6, "b", cardImage6b)
+const card7a = new Card(7, "a", cardImage7a)
+const card7b = new Card(7, "b", cardImage7b)
+const card8a = new Card(8, "a", cardImage8a)
+const card8b = new Card(8, "b", cardImage8b)
+const card9a = new Card(9, "a", cardImage9a)
+const card9b = new Card(9, "b", cardImage9b)
+const card10a = new Card(10, "a", cardImage10a)
+const card10b = new Card(10, "b", cardImage10b)
+
+const cardArray = [card1a, card1b, card2a, card2b, card3a, card3b, card4a, card4b, card5a, card5b, card6a, card6b, card7a, card7b, card8a, card8b, card9a, card9b, card10a, card10b]
+
+// 사용자 설정 변수 부분
+let selectedCard;
+let numberOfPlayers;
+
+// 누르면 작동하는 이벤트 (selected card를 결정)
+for (card of cardArray) {
+    card.image.onclick = (event) => {
+        for (i = 0; i < cardImages.length; i++) {
+            cardImages[i].style.opacity = "1.0";
+        }
+        event.target.style.opacity = "0.5";
+        selectedCard = imgToCard(event.target)
+        console.log(selectedCard)
+    }
+}
+
+// img property로 card객체를 return해주는 함수 (임시 방편)
+function imgToCard(img) {
+    for (card of cardArray) {
+        if (card.image == img) {
+            return card
+        }
+    }
+}
+
+
 // 나중에 map 함수 안에 있는 반복문 리팩토링하기
 class Scoreboard {
     constructor(owner) {
@@ -10,12 +92,7 @@ class Scoreboard {
     }
 }
 
-class Card {
-    constructor(num, side) {
-        this.num = num
-        this.side = side
-    }
-}
+
 
 class Pair {
     constructor(rank, special) {
@@ -35,27 +112,6 @@ class Game {
     }
 }
 
-// 각 카드 객체에 저장
-const card1a = new Card(1, "a")
-const card1b = new Card(1, "b")
-const card2a = new Card(2, "a")
-const card2b = new Card(2, "b")
-const card3a = new Card(3, "a")
-const card3b = new Card(3, "b")
-const card4a = new Card(4, "a")
-const card4b = new Card(4, "b")
-const card5a = new Card(5, "a")
-const card5b = new Card(5, "b")
-const card6a = new Card(6, "a")
-const card6b = new Card(6, "b")
-const card7a = new Card(7, "a")
-const card7b = new Card(7, "b")
-const card8a = new Card(8, "a")
-const card8b = new Card(8, "b")
-const card9a = new Card(9, "a")
-const card9b = new Card(9, "b")
-const card10a = new Card(10, "a")
-const card10b = new Card(10, "b")
 
 // deck을 섞어서 return하는 함수
 function shuffle(deck) { 
@@ -72,6 +128,21 @@ function shuffle(deck) {
 function pickTwoCards(shuffledDeck, numberOfPlayers) {
     let cardsOfEachPlayers = new Array();
     for (i = 0; i < numberOfPlayers; i++) {        
+        const card1 = shuffledDeck.pop();
+        const card2 = shuffledDeck.pop();
+    
+        cardsOfEachPlayers.push([card1, card2]);
+    }
+    return cardsOfEachPlayers;
+}
+
+function pickTwoCardsWithSelectedCard(shuffledDeck, numberOfPlayers, selectedCard) {
+    let cardsOfEachPlayers = new Array();
+    const secondCardOfP1 = shuffledDeck.pop();
+
+    cardsOfEachPlayers.push([selectedCard, secondCardOfP1])
+
+    for (i = 0; i < numberOfPlayers - 1; i++) {        
         const card1 = shuffledDeck.pop();
         const card2 = shuffledDeck.pop();
     
@@ -190,6 +261,7 @@ function makeCardsToPairs(cardsOfEachPlayers) {
     return pairsOfEachPlayers
 }
 
+// 게임을 업데이트하는데 필요함 함수
 function reflectPairToGame(pair, game) {
     if (pair.special) {
         if (pair.special == "mungGusa") {
@@ -228,7 +300,7 @@ function updateGame(pairsOfEachPlayers) {
 }
 
 
-
+// 특수족보를 들고있는 사람을 찾는다
 function findSpecialHolder(special, pairsOfEachPlayers) {
     for (i = 0; i < pairsOfEachPlayers.length; i++) {
         if (pairsOfEachPlayers[i].special == special) {
@@ -266,7 +338,7 @@ function decideGameWinner(game, pairsOfEachPlayers) {
     return game.winner
 }
 
-// 플레이어의 승무패를 기록해준다.
+// 플레이어의 승무패를 스코어보드에 기록해준다.
 function writeInScoreboard(scoreboard, winner) {
     if (!winner) {
         scoreboard.draw += 1
@@ -280,7 +352,7 @@ function writeInScoreboard(scoreboard, winner) {
     }
 }
 
-
+// 테스트 케이스 (중간)
 // let test0 = new Pair(23, null)
 // let test1 = new Pair(24, "mungGusa")
 // let test2 = new Pair(21, null)
@@ -300,43 +372,56 @@ function writeInScoreboard(scoreboard, winner) {
 // writeInScoreboard(testScoreboard, testWinner)
 // console.log(testScoreboard)
 
+function simulation(selectedCard, numberOfPlayers) {
+    const numOfSimulation = 1000
+    let numOfTrial = 0
+    let playScoreboard = new Scoreboard(0)
 
-const numOfSimulation = 100
-let numOfTrial = 0
-
-let playScoreboard = new Scoreboard(0)
-
-while (numOfTrial != numOfSimulation) {
-    let deck = [card1a, card1b, card2a, card2b, card3a, card3b, card4a, card4b, card5a, card5b, card6a, card6b, card7a, card7b, card8a, card8b, card9a, card9b, card10a, card10b]
-    let shuffledDeck = shuffle(deck);
-    const cardsOfEachPlayers = pickTwoCards(shuffledDeck, 5);
-    const pairsOfEachPlayers =  makeCardsToPairs(cardsOfEachPlayers);
-    const game = updateGame(pairsOfEachPlayers);
-    const gameWinner = decideGameWinner(game, pairsOfEachPlayers);
-    writeInScoreboard(playScoreboard, gameWinner);    
-    numOfTrial += 1
+    while (numOfTrial != numOfSimulation) {
+        let deck = [card1a, card1b, card2a, card2b, card3a, card3b, card4a, card4b, card5a, card5b, card6a, card6b, card7a, card7b, card8a, card8b, card9a, card9b, card10a, card10b]
+        const selectedCardIdx = deck.indexOf(selectedCard)
+        deck.splice(selectedCardIdx, 1)
+           
+        let simulationDeck = deck
+        let shuffledDeck = shuffle(simulationDeck);
+        const cardsOfEachPlayers = pickTwoCardsWithSelectedCard(shuffledDeck, numberOfPlayers, selectedCard);
+        const pairsOfEachPlayers =  makeCardsToPairs(cardsOfEachPlayers);
+        const game = updateGame(pairsOfEachPlayers);
+        const gameWinner = decideGameWinner(game, pairsOfEachPlayers);
+        writeInScoreboard(playScoreboard, gameWinner);    
+        
+        numOfTrial += 1
+    }
+    
+    return playScoreboard
 }
 
+console.log(simulation(card10a, 5))
 
+// 디버깅 테스트용 (복사해서 여러개 실행해볼 것)
+// let playScoreboard = new Scoreboard(0)
+// const selectedCard = card1a
+// const numberOfPlayers = 5
 
-// 디버깅용 테스트 케이스
+// // 여기 아래 부터 복사
 // var deck = [card1a, card1b, card2a, card2b, card3a, card3b, card4a, card4b, card5a, card5b, card6a, card6b, card7a, card7b, card8a, card8b, card9a, card9b, card10a, card10b]
-// var shuffledDeck = shuffle(deck);
-// var cardsOfEachPlayers = pickTwoCards(shuffledDeck, 5);
-// console.log(cardsOfEachPlayers)
+// var selectedCardIdx = deck.indexOf(selectedCard)
+// deck.splice(selectedCardIdx, 1)
+   
+// var simulationDeck = deck
+// var shuffledDeck = shuffle(simulationDeck);
+// var cardsOfEachPlayers = pickTwoCardsWithSelectedCard(shuffledDeck, numberOfPlayers, selectedCard);
 // var pairsOfEachPlayers =  makeCardsToPairs(cardsOfEachPlayers);
-// console.log(pairsOfEachPlayers)
 // var game = updateGame(pairsOfEachPlayers);
-// console.log(game)
 // var gameWinner = decideGameWinner(game, pairsOfEachPlayers);
-// console.log(gameWinner)
 // writeInScoreboard(playScoreboard, gameWinner);
 
+// console.log(cardsOfEachPlayers)
+// console.log(pairsOfEachPlayers)
+// console.log(game)
+// console.log(playScoreboard)
+// console.log("\n")
+// 여기까지 
 
 
 
-
-
-
-
-console.log(playScoreboard)
