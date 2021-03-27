@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/twoCardsSutda.css">
     <title>섯다 시뮬레이터</title>
 </head>
 <body>
+    <div class="numberOfPlayerSelector">
+        <form>
+            <input type="button" id="selectTwo" value="2명">
+            <input type="button" id="selectThree" value="3명">
+            <input type="button" id="selectFour" value="4명">
+            <input type="button" id="selectFive" value="5명">
+        </form>
+    </div>
     <div class="choiceBoard">
         <img class="cardImage" id="card1a" src="./images/1a.png" alt="card1a">
         <img class="cardImage" id="card1b" src="./images/1b.png" alt="card1b">
@@ -28,6 +37,11 @@
         <img class="cardImage" id="card9b" src="./images/9b.png" alt="card9b">
         <img class="cardImage" id="card10a" src="./images/10a.png" alt="card10a">
         <img class="cardImage" id="card10b" src="./images/10b.png" alt="card10b">
+    </div>
+    <div>
+        <div class="show" id="selectedNumberOfPlayersShow">플레이 인원: </div>
+        <div class="show" id="selectedCardShow">고른 카드</div>
+        <div class="show" id="simulationResultShow">시뮬레이션 결과: </div>
     </div>
     <script src="./js/twoCardsSutda.js"></script>
 </body>

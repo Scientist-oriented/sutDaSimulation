@@ -56,19 +56,84 @@ const card10b = new Card(10, "b", cardImage10b)
 
 const cardArray = [card1a, card1b, card2a, card2b, card3a, card3b, card4a, card4b, card5a, card5b, card6a, card6b, card7a, card7b, card8a, card8b, card9a, card9b, card10a, card10b]
 
+// 사람 명수 고르는 버튼 객체화
+const buttonTwo = document.getElementById("selectTwo");
+const buttonThree = document.getElementById("selectThree");
+const buttonFour = document.getElementById("selectFour");
+const buttonFive = document.getElementById("selectFive");
+const buttonArray = [buttonTwo, buttonThree, buttonFour, buttonFive]
+
 // 사용자 설정 변수 부분
 let selectedCard;
 let numberOfPlayers;
 
-// 누르면 작동하는 이벤트 (selected card를 결정)
+// 사용자가 모든 변수를 설정하는지 체크
+let cardSet = false;
+let numberOfPlayersSet = false;
+
+// 사용자 상호작용 output 부분
+const selectedCardshow = document.getElementById("selectedCardShow");
+const selectedNumberOfPlayersShow = document.getElementById("selectedNumberOfPlayersShow");
+const simulationResultShow = document.getElementById("simulationResultShow");
+
+// 인원수 버튼 누르면 작동하는 이벤트
+for (button of buttonArray) {
+    button.onclick = (event) => {
+        if (selectedNumberOfPlayersShow.childNodes.length > 1) {
+            selectedNumberOfPlayersShow.removeChild(selectedNumberOfPlayersShow.childNodes[1])
+        }
+
+        numberOfPlayers = buttonArray.indexOf(event.target) + 2;
+        const txtNode = document.createTextNode(`${numberOfPlayers}명이 플레이합니다.`); 
+        selectedNumberOfPlayersShow.appendChild(txtNode);
+
+        showResultOnScreen(selectedCard, numberOfPlayers);
+    }
+}
+
+
+// 카드 누르면 작동하는 이벤트 (selected card를 결정)
 for (card of cardArray) {
     card.image.onclick = (event) => {
-        for (i = 0; i < cardImages.length; i++) {
+        for (i = 0; i < cardImages.length; i++) { //
             cardImages[i].style.opacity = "1.0";
         }
         event.target.style.opacity = "0.5";
+        // 선택된 카드만 투명도 0.5로 변경
+
         selectedCard = imgToCard(event.target)
-        console.log(selectedCard)
+        // 선택된 카드를 저장해서 시뮬레이션에 활용
+        
+        // 선택한 카드 이미지를 출력함.
+        if (selectedCardshow.childNodes.length > 1) {
+            selectedCardshow.removeChild(selectedCardshow.childNodes[1])
+        }  // 이미 존재하는 이미지가 있다면 삭제
+
+        const selectedCardImage = document.createElement("img");
+        selectedCardImage.src = event.target.src        
+        selectedCardshow.appendChild(selectedCardImage);
+            // 새로운 이미지로 대체
+        
+        showResultOnScreen(selectedCard, numberOfPlayers);
+    }
+}
+
+// 화면에 결과를 보여주는 함수
+function showResultOnScreen(selectedCard, numberOfPlayers) {
+    if (selectedCard && numberOfPlayers) {
+        const result = simulation(selectedCard, numberOfPlayers);
+        const numberOfWins = result.win
+        const numberOfDraws = result.draw
+        const numberOfLoses = result.lose
+        const winRate = (numberOfWins / 1000) * 100
+
+        if (simulationResultShow.childNodes.length > 1) {
+            simulationResultShow.removeChild(simulationResultShow.childNodes[1])
+        }
+
+        const txtNode = document.createTextNode(`1000회 시뮬레이션 중 승리 ${numberOfWins}회, 패배 ${numberOfLoses}회, 무승부 ${numberOfDraws}회, 승률 ${winRate}%`); 
+        simulationResultShow.appendChild(txtNode);
+
     }
 }
 
@@ -208,9 +273,9 @@ function decidePair(card1, card2) {
         return new Pair(17, null);
     } else if ((card1.num == 4 && card2.num == 9) || (card1.num == 9 && card2.num == 4)) {
         if (card1.side == "a" && card2.side == "a") {
-            return new Pair(3, "mungGusa");
+            return new Pair(24, "mungGusa");
         } else {
-            return new Pair(3, "gusa");
+            return new Pair(24, "gusa");
         } 
     } else if ((card1.num == 4 && card2.num == 7) || (card1.num == 7 && card2.num == 4)) {
         if (card1.side == "a" && card2.side == "a") {
@@ -310,15 +375,16 @@ function findSpecialHolder(special, pairsOfEachPlayers) {
 }
 
 // 마지막으로 특수족보를 따진다.
+    // game 상태와 pair를 받아서 [winner]를 return한다.
 function decideGameWinner(game, pairsOfEachPlayers) {
     if (game.mungGusa) {
         if (game.rank > 3) {
-            return false; // 무승부는 승자가 없어서 false를 return
+            return []; // 무승부는 승자가 없어서 []
         }
     }
     if (game.gusa) {
         if (game.rank > 11) {
-            return false;
+            return [];
         }
     }
     if (game.fourSeven) { // 47땡잡이는 1땡 ~ 9땡에게 승리
@@ -340,7 +406,7 @@ function decideGameWinner(game, pairsOfEachPlayers) {
 
 // 플레이어의 승무패를 스코어보드에 기록해준다.
 function writeInScoreboard(scoreboard, winner) {
-    if (!winner) {
+    if (winner.length < 1) {
         scoreboard.draw += 1
         return
     } else if (winner.includes(scoreboard.owner)) {
@@ -395,8 +461,6 @@ function simulation(selectedCard, numberOfPlayers) {
     
     return playScoreboard
 }
-
-console.log(simulation(card10a, 5))
 
 // 디버깅 테스트용 (복사해서 여러개 실행해볼 것)
 // let playScoreboard = new Scoreboard(0)
